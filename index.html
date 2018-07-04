@@ -41,6 +41,7 @@
                 blue: 0x5fc4d0,
                 orange: 0xee5624,
                 yellow: 0xfaff70,
+				lightpink:0xffb6c1,
             }
 
 
@@ -55,13 +56,13 @@
 
             // parameters to customize the planet
             var parameters = {
-                minRadius: 30,
-                maxRadius: 50,
-                minSpeed: .015,
-                maxSpeed: .025,
-                particles: 300,
-                minSize: .1,
-                maxSize: 2,
+                minRadius: 40,
+                maxRadius: 55,
+                minSpeed: 0.005,
+                maxSpeed: 0.05,
+                particles: 1800,
+                minSize: 0.1,
+                maxSize: 0.2,
             }
 
 
@@ -87,7 +88,6 @@
                 // THE SCENE
                 // 
                 scene = new THREE.Scene();
-
                 //
                 // THE CAMERA
                 //
@@ -104,7 +104,7 @@
                 farPlane
                 );
                 */
-                fov=75
+                fov=75;
                 camera = new THREE.PerspectiveCamera(fov, WIDTH / HEIGHT, .1, 2000);
                 camera.position.z = 100;
 
@@ -118,7 +118,7 @@
                 });
                 renderer.setSize(WIDTH, HEIGHT);
                 renderer.shadowMapEnabled = true;
-
+             
                 // Make the renderer use the #world div to render le scene
 
                 container = document.getElementById('world');
@@ -136,20 +136,17 @@
                 ambientLight = new THREE.AmbientLight(0x663344);
                 scene.add(ambientLight);
 
-                light = new THREE.DirectionalLight(0xffffff, 1.5);
+                light = new THREE.DirectionalLight(0xffffff, 1.5);//平行光
                 light.position.set(200, 100, 200);
                 light.castShadow = true;
                 light.shadowDarkness = .8;
                 scene.add(light);
-
-
                 //
                 // CONTROLS
                 // used to rotate around the scene with the mouse
                 // you can drag to rotate, scroll to zoom
                 //
                 controls = new THREE.OrbitControls(camera, renderer.domElement);
-
                 //
                 // HANDLE SCREEN RESIZE
                 //
@@ -169,7 +166,7 @@
                 saturn.mesh.rotation.x = .2;
                 saturn.mesh.rotation.z = .2;
                 scene.add(saturn.mesh);
-
+				
                 // START THE LOOP
                 loop();
 
@@ -227,10 +224,14 @@
                 }
 
                 // create a new material for the planet
-                var matPlanet = getMat(Colors.orange);
+                //var matPlanet = getMat(Colors.orange);
+				
+				var geometry = new THREE.SphereGeometry(20,120,120);
+				var texture = THREE.ImageUtils.loadTexture('./attach/saturn.jpg',{},function(){renderer.render(scene,camera);});
+				var material =new THREE.MeshBasicMaterial( { map: texture} );
                 // create the mesh of the planet
-                this.planet = new THREE.Mesh(geomPlanet, matPlanet);
-
+                this.planet = new THREE.Mesh(geometry, material);
+                
                 this.ring = new THREE.Mesh();
                 this.nParticles = 0;
 
@@ -247,6 +248,7 @@
 
                 // update the position of the particles => must be moved to the loop
                 this.updateParticlesRotation();
+				
             }
 
             Saturn.prototype.updateParticlesCount = function() {
@@ -409,13 +411,13 @@
                 gui.add(parameters, 'maxRadius').min(40).max(100).step(1).name('Outer Radius').onChange(function() {
                     saturn.updateParticlesDefiniton();
                 });
-                gui.add(parameters, 'particles').min(50).max(800).step(1).name('Particles').onChange(function() {
+                gui.add(parameters, 'particles').min(50).max(5000).step(1).name('Particles').onChange(function() {
                     saturn.updateParticlesCount();
                 });
                 gui.add(parameters, 'minSpeed').min(.005).max(0.05).step(.001).name('Min Speed').onChange(function() {
                     saturn.updateParticlesDefiniton();
                 });
-                gui.add(parameters, 'maxSpeed').min(.005).max(0.05).step(.001).name('Max Speed').onChange(function() {
+                gui.add(parameters, 'maxSpeed').min(.005).max(1).step(.001).name('Max Speed').onChange(function() {
                     saturn.updateParticlesDefiniton();
                 });
 
