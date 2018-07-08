@@ -1,19 +1,36 @@
 <html>
-    <head>
+<head>
         <title>Saturn</title>
+
         <style>
-            @import url(http://fonts.googleapis.com/css?family=Open+Sans:800);
+            
             #world {
                 position: absolute;
                 width: 100%;
                 height: 100%;
                 overflow: hidden;
-                background: -webkit-linear-gradient(#2a3340, #172533);
-                background: linear-gradient(#2a3340, #172533);
+             
             }
             body {
                 margin: 0;
             }
+			#starsBox {
+ 				position: fixed;
+  				top: 0;
+  				left: 0;
+ 				right: 0;
+  				bottom: 0;
+				z-index: -1;
+				background: linear-gradient(#111111,#111111)   ; 
+			}
+			#starsBox span {
+ 			 	display: inline-block;
+  				width: auto;
+  				position: absolute;
+  				border-radius: 100%;
+  				transition: 100s linear;
+			}
+
         </style>
     </head>
     <body>
@@ -26,22 +43,17 @@
         <script>
             function getMat(color) {
                 // our material is a phong material, with no shininess (highlight) and a black specular
-                return new THREE.MeshPhongMaterial({
-                    color: color,
-                    shininess: 0,
-                    specular: 0x000000,
-                    shading: THREE.FlatShading // THREE.SmoothShading
-                });
+                return new THREE.MeshPhongMaterial( { color: 0xcccccc } );
             }
 
             // colors
 
             var Colors = {
-                green: 0x8fc999,
-                blue: 0x5fc4d0,
-                orange: 0xee5624,
-                yellow: 0xfaff70,
-				lightpink:0xffb6c1,
+                green: 0xaaaaaa,
+                blue: 0x555555,
+                orange: 0x666666,
+                yellow: 0x333333,
+				lightpink:0x777777,
             }
 
 
@@ -137,7 +149,7 @@
                 scene.add(ambientLight);
 
                 light = new THREE.DirectionalLight(0xaaaaaa, 1.5);//平行光
-                light.position.set(200, 100, 200);
+                light.position.set(00, 00, 90);
                 light.castShadow = true;
                 light.shadowDarkness = .8;
                 scene.add(light);
@@ -231,8 +243,7 @@
 				var material =new THREE.MeshLambertMaterial( { map: texture} );
                 // create the mesh of the planet
                 this.planet = new THREE.Mesh(geometry, material);
-                this.planet.castShadow = true;
-                
+
                 this.ring = new THREE.Mesh();
                 this.nParticles = 0;
 
@@ -246,6 +257,7 @@
                 this.mesh.add(this.ring);
 
                 this.planet.castShadow = true;
+                this.planet.receiveShadow = true;
 
                 // update the position of the particles => must be moved to the loop
                 this.updateParticlesRotation();
@@ -441,5 +453,28 @@
 
             }
         </script>
+		<div id="starsBox"></div>
+		<script type="text/javascript">
+			var cols = ['#f5d76e','#f7ca18','#f4d03f','#ececec','#ecf0f1','#a2ded0'];
+			var stars = 250;
+			for (var i = 0; i <= stars; i++) {
+			var size = Math.random()*3;
+  			var color = cols[parseInt(Math.random()*4)];
+			$('#starsBox').prepend('<span style=" width: ' + size + 'px; height: ' + size + 'px; top: ' + Math.random()*100 + '%; left: ' + Math.random()*100 + '%; background: ' + color + '; box-shadow: 0 0 '+ Math.random()*10 +'px' + color + ';"></span>') ;};
+			setTimeout(function(){ 
+			$('#starsBox span').each(function(){  
+ 				$(this).css('top', Math.random()*100 + '%').css('left', Math.random()*100 + '%'); 
+  										});
+			}, 1);
+			setInterval(function(){ 
+			$('#starsBox span').each(function(){  	
+ 			$(this).css('top', Math.random()*100 + '%').css('left', Math.random()*100 + '%'); 
+  										});
+            }, 100000);
+            $(document).ready(function(){
+                $('.close-button').click()
+            })
+		</script>
+  
     </body>
 </html>
